@@ -1,87 +1,445 @@
-import { ArrowRight, Award, BadgeCheck, Check, ChevronDown, FlaskConical, Sprout, Zap, Rocket } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  Check,
+  ChevronRight,
+  Compass,
+  LayoutGrid,
+  Plus,
+  Route,
+  Star,
+} from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Container } from "../components/ui/Container";
-import { Reveal } from "../components/ui/Reveal";
 import {
-  EDU_COMPARE_ROWS,
+  EDU_BATCHES,
+  EDU_CORPORATE,
   EDU_FAQS,
-  EDU_LABS,
+  EDU_HERO_STATS,
+  EDU_PATH,
+  EDU_PERSONAS,
   EDU_PROGRAMS,
-  EDU_STATS,
-  EDU_TOOLS,
+  EDU_REVIEWS,
+  EDU_TABS,
+  type BatchStatus,
+  type EduTab,
 } from "../data/education";
+import { Container } from "../components/ui/Container";
+import { PageHero } from "../components/ui/PageHero";
+import { Reveal } from "../components/ui/Reveal";
 
-const LEVEL_ICONS = [Sprout, Zap, Rocket];
+const TAB_ICONS = [LayoutGrid, CalendarDays, Route, Building2] as const;
 
-const LEARNING_PATH = [
-  { step: "STEP 01", title: "FUNDAMENTAL", items: ["Security Basics", "Networking", "Linux"] },
-  { step: "STEP 02", title: "ETHICAL HACKING", items: ["Penetration Testing", "Web Security", "Recon / Exploitation"] },
-  { step: "STEP 03", title: "SOC ANALYST", items: ["Threat Hunting", "SIEM", "Forensics"] },
-];
+const STATUS_STYLE: Record<BatchStatus, string> = {
+  Enrolling: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
+  Upcoming: "border-amber-500/30 bg-amber-500/10 text-amber-300",
+  Available: "border-sky-500/30 bg-sky-500/10 text-sky-300",
+};
+
+function ProgramsPanel() {
+  const [persona, setPersona] = useState<string | null>(null);
+  const match = EDU_PROGRAMS.find((p) => p.slug === persona);
+
+  return (
+    <div>
+      <Reveal>
+        <div className="mb-8 rounded-2xl border border-white/10 bg-navy-950/70 p-6 sm:p-7">
+          <p className="flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-ice">
+            <Compass size={14} aria-hidden="true" />
+            NOT SURE WHERE TO START?
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            {EDU_PERSONAS.map((ps) => {
+              const selected = persona === ps.programSlug;
+              return (
+                <button
+                  key={ps.programSlug}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setPersona(selected ? null : ps.programSlug)}
+                  className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors ${
+                    selected
+                      ? "border-[#B9C6FF] bg-[#B9C6FF] text-navy-950"
+                      : "border-white/15 text-mist hover:border-white/35 hover:text-paper"
+                  }`}
+                >
+                  {ps.label}
+                  <span className={`ml-2 text-xs font-normal ${selected ? "text-navy-800" : "text-fog"}`}>
+                    · {ps.hint}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {match && (
+            <p className="mt-4 text-sm text-mist">
+              Recommended for you:{" "}
+              <span className="font-semibold text-paper">
+                {match.title} ({match.level} · {match.duration})
+              </span>{" "}
+              — highlighted below.{" "}
+              <button
+                type="button"
+                onClick={() => setPersona(null)}
+                className="font-semibold text-ice hover:underline"
+              >
+                Show all
+              </button>
+            </p>
+          )}
+        </div>
+      </Reveal>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+      {EDU_PROGRAMS.map((p) => {
+        const Icon = p.icon;
+        const dimmed = persona !== null && persona !== p.slug;
+        return (
+          <Reveal key={p.slug} className="h-full">
+            <article
+              className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-navy-950/70 p-7 transition-opacity duration-300 ${dimmed ? "opacity-40 saturate-50" : ""}`}
+              style={{ boxShadow: `inset 0 1px 0 ${p.accent}22` }}
+            >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{ background: `linear-gradient(90deg, transparent, ${p.accent}88, transparent)` }}
+              />
+              <div className="flex items-start justify-between gap-3">
+                <span
+                  className="flex h-12 w-12 items-center justify-center rounded-xl"
+                  style={{ background: `${p.accent}1A`, color: p.accent }}
+                >
+                  <Icon size={24} aria-hidden="true" />
+                </span>
+                <span
+                  className="rounded-full px-3.5 py-1 text-xs font-bold text-navy-950"
+                  style={{ background: p.accent }}
+                >
+                  {p.badge}
+                </span>
+              </div>
+
+              <p className="mt-5 font-mono text-xs font-bold tracking-[0.18em]" style={{ color: p.accent }}>
+                {p.level.toUpperCase()} · {p.duration.toUpperCase()}
+              </p>
+              <h3 className="font-display mt-2 text-[1.35rem] font-bold leading-snug tracking-tight text-paper">
+                {p.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-mist">{p.description}</p>
+
+              <p className="mt-6 text-xs font-bold tracking-[0.2em]" style={{ color: p.accent }}>
+                WHAT YOU&apos;LL LEARN
+              </p>
+              <ul className="mt-3 space-y-2">
+                {p.learn.map((t) => (
+                  <li key={t} className="flex items-start gap-2 text-sm text-mist">
+                    <ChevronRight size={15} aria-hidden="true" className="mt-0.5 shrink-0" style={{ color: p.accent }} />
+                    {t}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-6 text-xs font-bold tracking-[0.2em]" style={{ color: p.accent }}>
+                OUTCOMES
+              </p>
+              <ul className="mt-3 space-y-2">
+                {p.outcomes.map((o) => (
+                  <li key={o} className="flex items-start gap-2 text-sm text-paper">
+                    <Check size={15} strokeWidth={3} aria-hidden="true" className="mt-0.5 shrink-0 text-emerald-400" />
+                    {o}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-auto flex items-center justify-between gap-3 border-t border-white/10 pt-6">
+                <span className="font-display text-2xl font-bold tabular-nums" style={{ color: p.accent }}>
+                  {p.price}
+                </span>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center gap-1.5 rounded-lg px-5 py-2.5 text-sm font-bold text-navy-950 transition-opacity hover:opacity-90"
+                  style={{ background: p.accent }}
+                >
+                  Enroll Now
+                  <ArrowRight size={15} aria-hidden="true" />
+                </Link>
+              </div>
+            </article>
+          </Reveal>
+        );
+      })}
+      </div>
+    </div>
+  );
+}
+
+function BatchesPanel() {
+  return (
+    <Reveal>
+      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-navy-950/70">
+        <table className="w-full min-w-[820px] border-collapse text-left text-sm">
+          <thead>
+            <tr className="border-b border-white/10 bg-white/[0.03] text-[13px] tracking-wide text-ice">
+              {["Program", "Start Date", "Mode", "Seats", "Available", "Status", "Action"].map((h) => (
+                <th key={h} scope="col" className="px-5 py-4 font-semibold">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {EDU_BATCHES.map((b) => (
+              <tr key={`${b.program}-${b.startDate}`} className="border-b border-white/[0.06] transition-colors last:border-0 hover:bg-white/[0.02]">
+                <td className="px-5 py-4 font-medium text-paper">{b.program}</td>
+                <td className="px-5 py-4 text-mist">{b.startDate}</td>
+                <td className="px-5 py-4 text-mist">{b.mode}</td>
+                <td className="px-5 py-4 tabular-nums text-mist">{b.seats}</td>
+                <td
+                  className={`px-5 py-4 font-bold tabular-nums ${b.available <= 8 ? "text-rose-300" : "text-emerald-300"}`}
+                >
+                  {b.available}
+                </td>
+                <td className="px-5 py-4">
+                  <span className={`inline-block rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLE[b.status]}`}>
+                    {b.status}
+                  </span>
+                </td>
+                <td className="px-5 py-4">
+                  <Link
+                    to="/contact"
+                    className="inline-block rounded-lg border border-ice/40 px-5 py-2 text-[13px] font-semibold text-ice transition-colors hover:bg-ice/10"
+                  >
+                    Register
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Reveal>
+  );
+}
+
+function PathPanel() {
+  return (
+    <div className="mx-auto max-w-2xl">
+      <Reveal className="text-center">
+        <h3 className="font-display text-2xl font-bold tracking-tight text-paper sm:text-3xl">
+          Your Cybersecurity Learning Journey
+        </h3>
+      </Reveal>
+      <ol className="mt-10">
+        {EDU_PATH.map((s, i) => {
+          const Icon = s.icon;
+          const last = i === EDU_PATH.length - 1;
+          return (
+            <Reveal key={s.index}>
+              <li className="relative flex gap-5 pb-10 last:pb-0">
+                {!last && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-[27px] top-16 bottom-0 w-px"
+                    style={{ background: `linear-gradient(180deg, ${s.accent}66, ${EDU_PATH[i + 1].accent}66)` }}
+                  />
+                )}
+                <span
+                  aria-hidden="true"
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 bg-navy-950"
+                  style={{ borderColor: `${s.accent}88`, color: s.accent, boxShadow: `0 0 24px -6px ${s.accent}66` }}
+                >
+                  <Icon size={22} />
+                </span>
+                <span className="pt-1">
+                  <span className="font-mono text-xs font-bold tracking-[0.2em]" style={{ color: s.accent }}>
+                    {s.index}
+                  </span>
+                  <span className="font-display mt-1 block text-xl font-bold text-paper">{s.title}</span>
+                  <span className="mt-1 block text-[15px] text-mist">{s.description}</span>
+                </span>
+              </li>
+            </Reveal>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+function CorporatePanel() {
+  return (
+    <div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {EDU_CORPORATE.map((c) => {
+          const Icon = c.icon;
+          return (
+            <Reveal key={c.title} className="h-full">
+              <article className="flex h-full flex-col rounded-2xl border border-white/10 bg-navy-950/70 p-7">
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-ice/10 text-ice">
+                  <Icon size={24} aria-hidden="true" />
+                </span>
+                <h3 className="font-display mt-5 text-xl font-bold tracking-tight text-ice">{c.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-mist">{c.description}</p>
+                <ul className="mt-5 space-y-2.5">
+                  {c.points.map((pt) => (
+                    <li key={pt} className="flex items-start gap-2 text-sm text-paper">
+                      <Check size={15} strokeWidth={3} aria-hidden="true" className="mt-0.5 shrink-0 text-emerald-400" />
+                      {pt}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            </Reveal>
+          );
+        })}
+      </div>
+
+      <Reveal>
+        <div className="mt-8 rounded-2xl border border-ice/25 bg-gradient-to-b from-ice/[0.07] to-transparent px-8 py-12 text-center">
+          <h3 className="font-display text-2xl font-bold tracking-tight text-paper sm:text-3xl">
+            Get a Custom Corporate Training Quote
+          </h3>
+          <p className="mx-auto mt-3 max-w-2xl text-mist">
+            We design programs for teams of 10 to 10,000. Online, on-site, or hybrid delivery available.
+          </p>
+          <Link
+            to="/contact"
+            className="mt-7 inline-flex items-center gap-2 rounded-lg bg-[#B9C6FF] px-8 py-3.5 text-sm font-semibold text-navy-950 transition-colors hover:bg-[#CBD6FF]"
+          >
+            Contact Us for Pricing
+            <ArrowRight size={15} aria-hidden="true" />
+          </Link>
+        </div>
+      </Reveal>
+    </div>
+  );
+}
+
+function StudentSuccess() {
+  return (
+    <section aria-labelledby="student-success-h" className="border-t border-white/[0.07]">
+      <Container className="py-16 lg:py-20">
+        <Reveal className="text-center">
+          <p className="eyebrow">Student Success</p>
+          <h2 id="student-success-h" className="font-display mt-3 text-2xl font-bold tracking-tight text-paper sm:text-3xl">
+            What Our Students Say
+          </h2>
+        </Reveal>
+        <ul className="mt-10 grid gap-6 md:grid-cols-3">
+          {EDU_REVIEWS.map((r) => (
+            <li key={r.name}>
+              <Reveal className="h-full">
+                <figure className="flex h-full flex-col rounded-2xl border border-white/10 bg-navy-950/70 p-7">
+                  <span className="flex gap-1" aria-label="Rated 5 out of 5 stars">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} size={15} aria-hidden="true" className="fill-amber-400 text-amber-400" />
+                    ))}
+                  </span>
+                  <blockquote className="mt-4 flex-1 text-[15px] italic leading-relaxed text-paper">
+                    &ldquo;{r.quote}&rdquo;
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ice/15 font-mono text-xs font-bold text-ice ring-1 ring-ice/30"
+                    >
+                      {r.initials}
+                    </span>
+                    <span>
+                      <span className="block text-sm font-semibold text-paper">{r.name}</span>
+                      <span className="block text-[13px] text-ice/80">{r.role}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </section>
+  );
+}
+
+function Faq() {
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section aria-labelledby="edu-faq-h" className="border-t border-white/[0.07]">
+      <Container className="max-w-3xl py-16 lg:py-20">
+        <Reveal className="text-center">
+          <h2 id="edu-faq-h" className="font-display text-2xl font-bold tracking-tight text-paper sm:text-3xl">
+            Frequently Asked Questions
+          </h2>
+        </Reveal>
+        <div className="mt-10 space-y-3">
+          {EDU_FAQS.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <Reveal key={f.question}>
+                <div
+                  className={`overflow-hidden rounded-xl border transition-colors ${
+                    isOpen ? "border-ice/30 bg-navy-950/80" : "border-white/10 bg-navy-950/50"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={`edu-faq-${i}`}
+                    onClick={() => setOpen(isOpen ? null : i)}
+                    className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left text-[15px] font-semibold text-paper"
+                  >
+                    {f.question}
+                    <Plus
+                      size={17}
+                      aria-hidden="true"
+                      className={`shrink-0 text-ice transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
+                    />
+                  </button>
+                  <div
+                    id={`edu-faq-${i}`}
+                    role="region"
+                    className={`grid transition-all duration-300 ${
+                      isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="px-6 pb-5 text-sm leading-relaxed text-mist">{f.answer}</p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+      </Container>
+    </section>
+  );
+}
 
 export function EducationPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [tab, setTab] = useState<EduTab>("Programs");
 
   return (
     <main id="main">
-      {/* HERO */}
-      <section className="relative overflow-hidden pt-16 lg:pt-[72px]" aria-label="Cyber Education Hub">
-        <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="bg-blueprint-grid pointer-events-none absolute inset-0 opacity-50 [mask-image:radial-gradient(70%_60%_at_50%_35%,#000,transparent)]" aria-hidden="true" />
-        <Container className="relative py-16 text-center sm:py-20 lg:py-24">
-          <Reveal>
-            <p className="eyebrow">Martian Blue Cyber Education Hub</p>
-            <h1 className="font-display mx-auto mt-4 max-w-4xl text-4xl font-bold leading-[1.08] tracking-tight text-paper sm:text-5xl">
-              Learn Cybersecurity. Build Real Security Skills.
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl leading-relaxed text-mist sm:text-lg">
-              Industry-focused cybersecurity programs with practical training,
-              hands-on labs, security tools and structured learning paths.
-            </p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href="#programs" className="rounded-full bg-electric px-7 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:bg-electric-bright">
-                Explore Programs →
-              </a>
-              <a href="#learning-path" className="rounded-full border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-semibold text-paper transition-all hover:-translate-y-px hover:border-ice/60 hover:bg-white/10">
-                View Learning Path ↓
-              </a>
-            </div>
-          </Reveal>
+      <PageHero
+        eyebrow="Cyber Education"
+        title="Build Job-Ready Cybersecurity Skills"
+        copy="Structured programs, live batches, and corporate training — from first principles to SOC-ready."
+        primary={{ label: "Explore Programs", href: "#edu-tabs" }}
+        secondary={{ label: "Talk to Us", href: "/contact" }}
+      />
 
-          {/* Learning progression */}
-          <Reveal delay={0.1}>
-            <ol className="mx-auto mt-12 grid max-w-3xl gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-center" aria-label="Learning progression">
-              {[
-                { level: "BEGINNER", course: "Fundamentals", weeks: "4 Weeks" },
-                { level: "INTERMEDIATE", course: "Ethical Hacking", weeks: "6 Weeks" },
-                { level: "ADVANCED", course: "SOC Analyst", weeks: "8 Weeks" },
-              ].map((s, i) => (
-                <div key={s.level} className="contents">
-                  <li className="panel rounded-xl px-5 py-4">
-                    <p className="font-display text-xs font-bold tracking-[0.2em] text-ice">{s.level}</p>
-                    <p className="mt-1 text-sm font-semibold text-paper">{s.course}</p>
-                    <p className="text-xs text-fog">{s.weeks}</p>
-                  </li>
-                  {i < 2 && (
-                    <span className="hidden font-mono text-electric-bright sm:block" aria-hidden="true">──→</span>
-                  )}
-                </div>
-              ))}
-            </ol>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* KEY STATS */}
-      <section aria-label="Key stats" className="border-y border-white/10 bg-navy-950/60">
-        <Container className="py-12">
-          <dl className="grid grid-cols-2 gap-8 lg:grid-cols-4">
-            {EDU_STATS.map((s, i) => (
-              <Reveal key={s.label} delay={i * 0.06}>
-                <div className="flex flex-col gap-1 border-l-2 border-electric/50 pl-5">
-                  <dd className="font-display text-3xl font-bold uppercase text-paper lg:text-4xl">{s.value}</dd>
-                  <dt className="text-sm font-medium text-mist">{s.label}</dt>
+      <section aria-label="Education highlights" className="border-b border-white/[0.07]">
+        <Container className="py-10">
+          <dl className="mx-auto grid max-w-4xl grid-cols-2 gap-4 lg:grid-cols-4">
+            {EDU_HERO_STATS.map((s) => (
+              <Reveal key={s.label}>
+                <div className="rounded-2xl border border-ice/20 bg-ice/[0.04] px-4 py-6 text-center">
+                  <dd className="font-display text-2xl font-bold tabular-nums text-ice sm:text-3xl">
+                    {s.value}
+                  </dd>
+                  <dt className="mt-1.5 text-[13px] text-mist">{s.label}</dt>
                 </div>
               </Reveal>
             ))}
@@ -89,319 +447,62 @@ export function EducationPage() {
         </Container>
       </section>
 
-      {/* EDUCATION NAVIGATION */}
-      <Container className="pt-10">
-        <Reveal>
-          <nav aria-label="Education sections" className="flex flex-wrap justify-center gap-2.5">
-            {[
-              ["PROGRAMS", "#programs"],
-              ["UPCOMING BATCHES", "#batches"],
-              ["LEARNING PATH", "#learning-path"],
-              ["CORPORATE TRAINING", "#corporate"],
-            ].map(([label, href]) => (
-              <a key={label} href={href} className="rounded-full border border-white/15 bg-navy-950/70 px-5 py-2.5 text-[13px] font-bold tracking-[0.12em] text-mist transition-colors hover:border-ice/50 hover:text-paper">
-                {label}
-              </a>
-            ))}
-          </nav>
-        </Reveal>
+      <div id="edu-tabs" className="sticky top-16 z-30 scroll-mt-24 border-b border-white/10 bg-abyss/90 backdrop-blur-xl lg:top-[72px]">
+        <Container className="py-0">
+          <div role="tablist" aria-label="Education sections" className="slim-scroll flex gap-2.5 overflow-x-auto py-3">
+            {EDU_TABS.map((t, i) => {
+              const Icon = TAB_ICONS[i];
+              const selected = tab === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setTab(t)}
+                  className={`flex shrink-0 items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${
+                    selected
+                      ? "border-[#B9C6FF] bg-[#B9C6FF] text-navy-950"
+                      : "border-white/12 text-mist hover:border-white/30 hover:text-paper"
+                  }`}
+                >
+                  <Icon size={15} aria-hidden="true" />
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+        </Container>
+      </div>
+
+      <Container className="pt-12">
+        {tab === "Programs" && <ProgramsPanel />}
+        {tab === "Upcoming Batches" && <BatchesPanel />}
+        {tab === "Learning Path" && <PathPanel />}
+        {tab === "Corporate Training" && <CorporatePanel />}
       </Container>
 
-      {/* OUR PROGRAMS */}
-      <section id="programs" aria-labelledby="programs-h" className="scroll-mt-24 py-16 lg:py-20">
-        <Container>
-          <Reveal className="text-center">
-            <p className="eyebrow">Our Programs</p>
-            <h2 id="programs-h" className="font-display mt-3 text-3xl font-bold text-paper sm:text-4xl">
-              Choose the right path for your level.
-            </h2>
-          </Reveal>
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {EDU_PROGRAMS.map((p, i) => {
-              const Icon = LEVEL_ICONS[i % LEVEL_ICONS.length];
-              return (
-                <Reveal key={p.slug} delay={i * 0.07}>
-                  <article className="panel panel-top-highlight flex h-full flex-col rounded-2xl p-8">
-                    <p className="inline-flex w-fit items-center gap-1.5 rounded-full border border-ice/40 bg-ice/10 px-3 py-1 text-[11px] font-bold tracking-[0.14em] text-ice">
-                      <Icon size={13} aria-hidden="true" /> {p.badge.toUpperCase()}
-                    </p>
-                    <p className="mt-4 text-xs font-bold tracking-[0.18em] text-fog">
-                      {p.level.toUpperCase()} · {p.duration.toUpperCase()}
-                    </p>
-                    <h3 className="font-display mt-2 text-xl font-bold leading-snug text-paper">
-                      {p.title.toUpperCase()}
-                    </h3>
-                    <p className="mt-2 text-[15px] text-mist">{p.description}</p>
-                    <ul className="mt-5 space-y-2">
-                      {p.topics.map((t) => (
-                        <li key={t} className="flex items-center gap-2.5 text-sm text-paper">
-                          <Check size={15} aria-hidden="true" className="shrink-0 text-ice" /> {t}
-                        </li>
-                      ))}
-                      <li className="text-sm text-fog">+ More topics</li>
-                    </ul>
-                    <p className="mt-5 flex items-center gap-2 border-t border-white/10 pt-4 text-sm font-medium text-mist">
-                      <BadgeCheck size={16} className="text-ice" aria-hidden="true" /> Certificate Included
-                    </p>
-                    <div className="mt-5 flex items-center justify-between">
-                      <p className="font-display text-2xl font-bold text-paper">{p.price}</p>
-                      <Link to="/contact" className="group inline-flex items-center gap-1.5 rounded-full bg-electric px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-electric-bright">
-                        View <ArrowRight size={14} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
-                      </Link>
-                    </div>
-                  </article>
-                </Reveal>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
+      <div className="mt-4">
+        <StudentSuccess />
+        <Faq />
+      </div>
 
-      {/* COMPARE PROGRAMS */}
-      <section aria-labelledby="compare-h" className="border-y border-white/10 bg-navy-950/60 py-16 lg:py-20">
-        <Container>
-          <Reveal className="text-center">
-            <p className="eyebrow">Compare Programs</p>
-            <h2 id="compare-h" className="font-display mt-3 text-3xl font-bold text-paper">
-              Which path is right for you?
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="slim-scroll mx-auto mt-8 max-w-4xl overflow-x-auto rounded-2xl border border-white/10">
-              <table className="w-full min-w-[560px] border-collapse bg-abyss/60 text-left text-sm">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="px-5 py-4 font-medium text-fog"><span className="sr-only">Feature</span></th>
-                    {["Beginner", "Intermediate", "Advanced"].map((h) => (
-                      <th key={h} className="font-display px-5 py-4 font-bold text-paper">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {EDU_COMPARE_ROWS.map((r) => (
-                    <tr key={r.label} className="border-b border-white/5 last:border-0">
-                      <th className="px-5 py-3.5 font-medium text-mist">{r.label}</th>
-                      {r.values.map((v, i) => (
-                        <td key={i} className="px-5 py-3.5 text-paper">{v}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* YOUR LEARNING PATH */}
-      <section id="learning-path" aria-labelledby="path-h" className="scroll-mt-24 py-16 lg:py-20">
-        <Container>
-          <Reveal className="text-center">
-            <p className="eyebrow">Your Learning Path</p>
-            <h2 id="path-h" className="font-display mt-3 text-3xl font-bold text-paper">Fundamentals → Offense → Defense → Career</h2>
-          </Reveal>
-          <ol className="mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-3">
-            {LEARNING_PATH.map((s, i) => (
-              <Reveal key={s.step} delay={i * 0.07}>
-                <li className="panel rounded-2xl p-7 text-center">
-                  <p className="font-mono text-xs text-ice">{s.step}</p>
-                  <h3 className="font-display mt-2 text-lg font-bold tracking-wide text-paper">{s.title}</h3>
-                  <ul className="mt-4 space-y-1.5 text-sm text-mist">
-                    {s.items.map((t) => <li key={t}>{t}</li>)}
-                  </ul>
-                </li>
-              </Reveal>
-            ))}
-          </ol>
-          <Reveal delay={0.15}>
-            <div className="mx-auto mt-6 flex max-w-5xl flex-col items-center gap-2 text-center" aria-label="Certification to career">
-              <span className="font-mono text-fog" aria-hidden="true">▼</span>
-              <p className="rounded-full border border-ice/40 bg-ice/10 px-6 py-2 text-sm font-bold tracking-[0.14em] text-ice">CERTIFICATION</p>
-              <span className="font-mono text-fog" aria-hidden="true">▼</span>
-              <p className="rounded-full bg-electric px-6 py-2 text-sm font-bold tracking-[0.14em] text-white">CYBERSECURITY CAREER</p>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* LEARN BY DOING */}
-      <section id="labs" aria-labelledby="labs-h" className="scroll-mt-24 border-y border-white/10 bg-navy-950/60 py-16 lg:py-20">
-        <Container>
-          <Reveal className="text-center">
-            <p className="eyebrow">Learn By Doing</p>
-            <h2 id="labs-h" className="font-display mt-3 text-3xl font-bold text-paper">
-              Don&apos;t just learn cybersecurity. Practice it.
-            </h2>
-          </Reveal>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {EDU_LABS.map((l, i) => (
-              <Reveal key={l.title} delay={i * 0.06}>
-                <div className="panel h-full rounded-2xl p-6">
-                  <FlaskConical size={22} className="text-ice" aria-hidden="true" />
-                  <h3 className="font-display mt-4 text-base font-bold tracking-wide text-paper">{l.title.toUpperCase()}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-mist">{l.tools}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal delay={0.1}>
-            <h3 className="font-display mt-12 text-center text-xs font-bold tracking-[0.24em] text-fog">TOOLS YOU&apos;LL WORK WITH</h3>
-            <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Security tools">
-              {EDU_TOOLS.map((t) => (
-                <li key={t} className="rounded-lg border border-white/10 bg-abyss/70 px-4 py-3 text-center font-mono text-[13px] tracking-[0.12em] text-paper">
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* INSTRUCTORS + CERTIFICATION */}
-      <section className="py-16 lg:py-20">
-        <Container>
-          <Reveal className="text-center">
-            <p className="eyebrow">Learn From Practitioners</p>
-            <h2 className="font-display mt-3 text-3xl font-bold text-paper">Experienced instructors. Practical security knowledge.</h2>
-          </Reveal>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {[
-              ["Instructor 01", "Security Expert"],
-              ["Instructor 02", "Pentest Expert"],
-              ["Instructor 03", "SOC Professional"],
-            ].map(([name, role], i) => (
-              <Reveal key={name} delay={i * 0.07}>
-                <div className="panel rounded-2xl p-7 text-center">
-                  <div className="bg-blueprint-grid mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-dashed border-white/20 bg-navy-900/60 text-xs tracking-[0.2em] text-fog" aria-hidden="true">
-                    PHOTO
-                  </div>
-                  <h3 className="font-display mt-4 text-lg font-semibold text-paper">{name}</h3>
-                  <p className="text-sm text-mist">{role}</p>
-                  <p className="mt-3 text-sm font-semibold text-ice">View Profile →</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          {/* Certification */}
-          <Reveal delay={0.1}>
-            <div id="certification" className="panel mt-12 grid scroll-mt-24 items-center gap-8 rounded-2xl p-8 scroll-mt-24 lg:grid-cols-2 lg:p-12">
-              <div>
-                <p className="eyebrow">MartianBlue Certification</p>
-                <h3 className="font-display mt-3 text-2xl font-bold text-paper sm:text-3xl">Complete your training. Demonstrate your skills.</h3>
-                <Link to="/contact" className="group mt-6 inline-flex items-center gap-2 rounded-full bg-electric px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-electric-bright">
-                  Verify Certificate <ArrowRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
-              <div className="rounded-xl border border-ice/30 bg-abyss/80 p-8 text-center" role="img" aria-label="Certificate of completion for Ethical Hacking and Penetration Testing">
-                <p className="text-[11px] font-bold tracking-[0.24em] text-ice">MARTIANBLUE CYBER DEFENSE</p>
-                <p className="font-display mt-3 text-lg font-bold text-paper">CERTIFICATE OF COMPLETION</p>
-                <p className="mt-2 text-sm text-mist">Ethical Hacking &<br />Penetration Testing</p>
-                <p className="mx-auto mt-4 max-w-[220px] rounded border border-dashed border-white/20 px-4 py-2 text-sm text-fog">[ Student Name ]</p>
-                <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-fog">
-                  <Award size={13} aria-hidden="true" /> Certificate ID
-                </p>
-              </div>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* UPCOMING BATCHES */}
-      <section id="batches" aria-labelledby="batches-h" className="scroll-mt-24 border-y border-white/10 bg-navy-950/60 py-16 lg:py-20">
-        <Container>
-          <Reveal>
-            <p className="eyebrow">Upcoming Batches</p>
-            <h2 id="batches-h" className="font-display mt-3 text-3xl font-bold text-paper">Reserve your seat.</h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <div className="panel mt-8 rounded-2xl p-7 sm:p-8" role="group" aria-label="Upcoming batch: Ethical Hacking and Penetration Testing">
-              <h3 className="font-display text-lg font-bold tracking-wide text-paper sm:text-xl">ETHICAL HACKING & PENETRATION TESTING</h3>
-              <dl className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                {[
-                  ["START DATE", "15 NOV 2026"],
-                  ["MODE", "ONLINE"],
-                  ["DURATION", "6 WEEKS"],
-                  ["AVAILABLE SEATS", "08 SEATS LEFT"],
-                ].map(([k, v]) => (
-                  <div key={k}>
-                    <dt className="text-[11px] font-bold tracking-[0.18em] text-fog">{k}</dt>
-                    <dd className="font-display mt-1 font-bold text-paper">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-              <div className="mt-6 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <p className="font-display text-2xl font-bold text-paper">₹6,999</p>
-                <Link to="/contact" className="group inline-flex items-center justify-center gap-2 rounded-full bg-electric px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-electric-bright">
-                  ENROLL NOW <ArrowRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* Learner testimonials */}
-          <Reveal delay={0.1}>
-            <h3 className="font-display mt-12 text-center text-xl font-semibold text-paper">“Real training. Real practical experience.”</h3>
-            <figure className="panel mx-auto mt-5 max-w-2xl rounded-2xl p-8 text-center">
-              <blockquote className="text-mist">“....................................”</blockquote>
-              <figcaption className="mt-4 text-sm text-fog">— Student Name<br />Ethical Hacking Program</figcaption>
-            </figure>
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* FAQS */}
-      <section aria-labelledby="faq-h" className="py-16 lg:py-20">
-        <Container className="max-w-3xl">
-          <Reveal className="text-center">
-            <p className="eyebrow">FAQs</p>
-            <h2 id="faq-h" className="font-display mt-3 text-3xl font-bold text-paper">Frequently Asked Questions</h2>
-          </Reveal>
-          <div className="mt-8 divide-y divide-white/10 rounded-2xl border border-white/10">
-            {EDU_FAQS.map((q, i) => {
-              const open = openFaq === i;
-              return (
-                <div key={q}>
-                  <button
-                    type="button"
-                    aria-expanded={open}
-                    onClick={() => setOpenFaq(open ? null : i)}
-                    className="flex w-full items-center justify-between gap-4 px-6 py-4 text-left text-[15px] font-medium text-paper transition-colors hover:bg-white/[0.02]"
-                  >
-                    {q}
-                    <ChevronDown size={17} aria-hidden="true" className={`shrink-0 text-mist transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
-                  </button>
-                  {open && (
-                    <p className="px-6 pb-5 text-sm leading-relaxed text-mist">
-                      Contact our team for the latest details on {q.charAt(0).toLowerCase() + q.slice(1, -2)} and related program information.
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
-
-      {/* FINAL CTA */}
-      <section id="corporate" aria-labelledby="edu-cta" className="relative scroll-mt-24 overflow-hidden border-t border-white/10">
-        <div className="hero-glow pointer-events-none absolute inset-0" aria-hidden="true" />
-        <Container className="relative py-16 text-center lg:py-20">
-          <Reveal>
-            <h2 id="edu-cta" className="font-display text-3xl font-bold text-paper sm:text-4xl">READY TO BUILD YOUR CYBER SKILLS?</h2>
-            <p className="mx-auto mt-3 max-w-xl text-mist">Start with the right program and begin your journey into practical cybersecurity.</p>
-            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href="#programs" className="rounded-full bg-electric px-7 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:bg-electric-bright">Explore Programs →</a>
-              <a href="#batches" className="rounded-full border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-semibold text-paper transition-all hover:border-ice/60">View Upcoming Batches →</a>
-            </div>
-            <p className="mt-8 text-sm text-fog">Looking for cybersecurity training for your organization?</p>
-            <Link to="/contact" className="group mt-3 inline-flex items-center gap-2 text-sm font-semibold text-ice">
-              Corporate Training <ArrowRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
+      <Container className="pb-24">
+        <Reveal>
+          <div className="flex flex-col items-center justify-between gap-5 rounded-2xl border border-white/10 bg-navy-950/70 px-8 py-8 text-center sm:flex-row sm:text-left">
+            <p className="font-display text-xl font-semibold text-paper">
+              Ready to start your cybersecurity journey?
+            </p>
+            <Link
+              to="/contact"
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#B9C6FF] px-7 py-3.5 text-sm font-semibold text-navy-950 transition-colors hover:bg-[#CBD6FF]"
+            >
+              Enroll Now
+              <ArrowRight size={15} aria-hidden="true" />
             </Link>
-          </Reveal>
-        </Container>
-      </section>
+          </div>
+        </Reveal>
+      </Container>
     </main>
   );
 }

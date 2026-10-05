@@ -92,7 +92,7 @@ export function Footer() {
               <ul className="mt-4 space-y-2.5">
                 {INDUSTRY_LINKS.map((l) => (
                   <li key={l}>
-                    <Link to="/#industries" className="text-[13px] text-mist transition-colors hover:text-paper">
+                    <Link to="/industries" className="text-[13px] text-mist transition-colors hover:text-paper">
                       {l}
                     </Link>
                   </li>

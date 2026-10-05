@@ -6,6 +6,7 @@ import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
 import { EducationPage } from "./pages/EducationPage";
 import { Home } from "./pages/Home";
+import { IndustriesPage } from "./pages/IndustriesPage";
 import { ResourcesPage } from "./pages/ResourcesPage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { SolutionsPage } from "./pages/SolutionsPage";
@@ -41,6 +42,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/solutions" element={<SolutionsPage />} />
+          <Route path="/industries" element={<IndustriesPage />} />
           <Route path="/education" element={<EducationPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
