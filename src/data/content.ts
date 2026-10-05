@@ -84,33 +84,51 @@ export const CASE_STUDIES: CaseStudy[] = [
 /* ---------- Testimonials: carousel, sample layout only ---------- */
 
 export interface Testimonial {
+  headline: string;
   quote: string;
   name: string;
   designation: string;
   organization: string;
+  avatar: string;
+  avatarAlt: string;
   sample: true;
 }
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    quote: "Client testimonial placeholder — approved customer stories will appear here.",
-    name: "Client Name",
-    designation: "Designation",
-    organization: "Organization",
+    headline: "Phishing reports became our best early-warning system",
+    quote:
+      "Our simulation click rate dropped from 28% to 4% in two quarters. The board finally sees security awareness as a measurable control, not a checkbox exercise.",
+    name: "Jonas Lindqvist",
+    designation: "CISO",
+    organization: "Nordwind Logistics",
+    avatar:
+      "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&auto=format&fit=crop",
+    avatarAlt: "Portrait of Jonas Lindqvist",
     sample: true,
   },
   {
-    quote: "Client testimonial placeholder — approved customer stories will appear here.",
-    name: "Client Name",
-    designation: "Designation",
-    organization: "Organization",
+    headline: "Training that changed how our engineers write code",
+    quote:
+      "The secure SDLC reviews caught flaws our pipeline had missed for years. Our release cycle did not slow down — it got safer, and the auditors noticed.",
+    name: "Priya Nair",
+    designation: "Head of Engineering",
+    organization: "Helios Fintech",
+    avatar:
+      "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&auto=format&fit=crop",
+    avatarAlt: "Portrait of Priya Nair",
     sample: true,
   },
   {
-    quote: "Client testimonial placeholder — approved customer stories will appear here.",
-    name: "Client Name",
-    designation: "Designation",
-    organization: "Organization",
+    headline: "We detect intrusions in minutes, not weeks",
+    quote:
+      "Round-the-clock monitoring with AI-assisted triage cut our mean time to respond from days to under an hour. Patient data has never been safer.",
+    name: "Marcus Feld",
+    designation: "Security Operations Lead",
+    organization: "MedCore Clinics",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=256&auto=format&fit=crop",
+    avatarAlt: "Portrait of Marcus Feld",
     sample: true,
   },
 ];

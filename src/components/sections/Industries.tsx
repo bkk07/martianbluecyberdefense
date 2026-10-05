@@ -13,36 +13,60 @@ export function Industries() {
           <SectionHeading
             eyebrow="Industries"
             title="Cybersecurity for Every Digital Environment"
+            copy="Purpose-built protection for the sectors where security failure is not an option."
             align="center"
           />
         </div>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {INDUSTRIES.map((ind, i) => {
+        <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {INDUSTRIES.map((ind) => {
             const Icon = ind.icon;
             return (
-              <Reveal key={ind.slug} delay={Math.min(i * 0.06, 0.3)}>
-                <Link
-                  to="/contact"
-                  className="panel group flex h-full flex-col rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1 hover:border-electric/40 hover:shadow-[0_20px_60px_-20px_rgba(46,124,246,0.5)]"
-                  aria-label={`${ind.name} — ${ind.description} Contact us.`}
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-lg border border-electric/35 bg-electric/12 transition-colors group-hover:bg-electric/25" aria-hidden="true">
-                    <Icon size={22} className="text-ice" />
-                  </span>
-                  <span className="font-display mt-5 text-lg font-bold tracking-wide text-paper">
-                    {ind.name.toUpperCase()}
-                  </span>
-                  <span className="mt-2 flex-1 text-[15px] leading-relaxed text-mist">{ind.description}</span>
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-ice">
-                    Discuss your security posture
-                    <ArrowUpRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-px group-hover:-translate-y-px" />
-                  </span>
-                </Link>
-              </Reveal>
+              <li key={ind.slug}>
+                <Reveal className="h-full">
+                  <Link
+                    to="/contact"
+                    aria-label={`${ind.name} — ${ind.description}`}
+                    className="relative block h-full overflow-hidden rounded-xl border border-white/10 transition-colors hover:border-white/25"
+                  >
+                    <img
+                      src={ind.image}
+                      alt={ind.imageAlt}
+                      loading="lazy"
+                      className="aspect-[4/3] w-full object-cover"
+                    />
+                    <span
+                      className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/45 to-transparent"
+                      aria-hidden="true"
+                    />
+                    <span
+                      className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-navy-950/50 text-paper backdrop-blur-sm"
+                      aria-hidden="true"
+                    >
+                      <ArrowUpRight size={17} />
+                    </span>
+                    <span className="absolute inset-x-0 bottom-0 flex items-start gap-3.5 p-6">
+                      <span
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-ice backdrop-blur-sm"
+                        aria-hidden="true"
+                      >
+                        <Icon size={20} />
+                      </span>
+                      <span>
+                        <span className="font-display block text-lg font-bold tracking-tight text-paper">
+                          {ind.name}
+                        </span>
+                        <span className="mt-1 block text-sm leading-relaxed text-white/80">
+                          {ind.description}
+                        </span>
+                      </span>
+                    </span>
+                  </Link>
+                </Reveal>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </Container>
     </section>
   );

@@ -1,103 +1,136 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Quote } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
 import { TESTIMONIALS } from "../../data/content";
 import { Container } from "../ui/Container";
 import { Reveal } from "../ui/Reveal";
 import { SectionHeading } from "../ui/SectionHeading";
 
 export function Testimonials() {
-  const [[index, dir], setIndex] = useState<[number, number]>([0, 0]);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
 
-  const go = (d: number) =>
-    setIndex(([i]) => [(i + d + TESTIMONIALS.length) % TESTIMONIALS.length, d]);
+  const stepWidth = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return 0;
+    const card = el.querySelector<HTMLElement>("[data-card]");
+    return card ? card.offsetWidth + 24 : el.clientWidth * 0.8;
+  }, []);
 
-  const t = TESTIMONIALS[index];
-  const initials = t.name
-    .split(/\s+/)
-    .map((w) => w.charAt(0))
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const scrollToIndex = useCallback(
+    (i: number) => {
+      const el = trackRef.current;
+      if (!el) return;
+      const clamped = Math.max(0, Math.min(TESTIMONIALS.length - 1, i));
+      setActive(clamped);
+      el.scrollTo({ left: clamped * stepWidth(), behavior: "smooth" });
+    },
+    [stepWidth]
+  );
+
+  const handleScroll = useCallback(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const w = stepWidth();
+    if (w > 0) setActive(Math.round(el.scrollLeft / w));
+  }, [stepWidth]);
 
   return (
-    <section className="border-y border-white/10 bg-navy-950/60 py-20 lg:py-28" aria-labelledby="testimonials-heading" aria-roledescription="carousel">
+    <section
+      className="overflow-hidden border-y border-white/10 bg-navy-950/60 py-20 lg:py-28"
+      aria-labelledby="testimonials-heading"
+      aria-roledescription="carousel"
+    >
       <Container>
         <div id="testimonials-heading">
           <SectionHeading
             eyebrow="Testimonials"
             title="What Our Clients Say"
+            copy="Security leaders trust Martian Blue to protect what matters most to their organizations."
             align="center"
           />
         </div>
+      </Container>
 
-        <Reveal className="mx-auto mt-12 max-w-3xl">
-          <div className="relative overflow-hidden rounded-xl border border-white/10 bg-abyss/60 px-7 py-10 text-center sm:px-12">
-            <Quote size={26} className="mx-auto text-electric-bright" aria-hidden="true" />
-            <div className="relative mt-6 min-h-[140px]">
-              <AnimatePresence mode="wait" custom={dir}>
-                <motion.figure
-                  key={index}
-                  custom={dir}
-                  initial={{ opacity: 0, x: dir >= 0 ? 40 : -40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: dir >= 0 ? -40 : 40 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      <Reveal className="relative mt-12">
+        <div className="mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="relative">
+            {/* side arrows */}
+            <button
+              type="button"
+              onClick={() => scrollToIndex(active - 1)}
+              disabled={active === 0}
+              aria-label="Previous testimonials"
+              className="absolute -left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-electric text-white shadow-lg transition-colors hover:bg-electric-bright disabled:cursor-default disabled:opacity-30 sm:-left-4"
+            >
+              <ChevronLeft size={22} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollToIndex(active + 1)}
+              disabled={active === TESTIMONIALS.length - 1}
+              aria-label="Next testimonials"
+              className="absolute -right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-electric text-white shadow-lg transition-colors hover:bg-electric-bright disabled:cursor-default disabled:opacity-30 sm:-right-4"
+            >
+              <ChevronRight size={22} aria-hidden="true" />
+            </button>
+
+            {/* track */}
+            <div
+              ref={trackRef}
+              onScroll={handleScroll}
+              className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-8 py-2 [scrollbar-width:none] sm:px-10 [&::-webkit-scrollbar]:hidden"
+            >
+              {TESTIMONIALS.map((t, i) => (
+                <figure
+                  key={t.avatar}
+                  data-card
+                  aria-roledescription="slide"
+                  aria-label={`Testimonial ${i + 1} of ${TESTIMONIALS.length}`}
+                  className="flex w-[82%] shrink-0 snap-start flex-col rounded-2xl border border-white/10 bg-abyss/70 p-7 sm:w-[62%] sm:p-9 lg:w-[47%]"
                 >
-                  <blockquote className="font-display mx-auto max-w-xl text-xl font-medium leading-relaxed text-paper sm:text-2xl">
-                    “{t.quote}”
+                  <blockquote className="font-display text-lg font-bold leading-snug tracking-tight text-paper sm:text-xl">
+                    &ldquo;{t.headline}&rdquo;
                   </blockquote>
-                  <figcaption className="mt-6 flex items-center justify-center gap-3.5">
-                    <span
-                      className="font-display flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-electric/40 bg-electric/15 text-sm font-bold text-ice"
-                      aria-hidden="true"
-                    >
-                      {initials}
-                    </span>
-                    <span className="text-left">
-                      <span className="block text-sm font-bold tracking-[0.14em] text-paper">{t.name.toUpperCase()}</span>
-                      <span className="block text-[13px] text-mist">{t.designation} · {t.organization}</span>
+                  <p className="mt-4 flex-1 leading-relaxed text-mist">{t.quote}</p>
+                  <figcaption className="mt-7 flex items-center gap-4">
+                    <img
+                      src={t.avatar}
+                      alt={t.avatarAlt}
+                      loading="lazy"
+                      className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-white/20"
+                    />
+                    <span>
+                      <span className="block text-base font-semibold text-paper">{t.name}</span>
+                      <span className="block text-sm text-mist">
+                        {t.designation} &middot; {t.organization}
+                      </span>
                     </span>
                   </figcaption>
-                </motion.figure>
-              </AnimatePresence>
+                </figure>
+              ))}
             </div>
-
-            <div className="mt-8 flex items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={() => go(-1)}
-                aria-label="Previous testimonial"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-mist transition-colors hover:border-ice hover:text-ice"
-              >
-                <ArrowLeft size={17} aria-hidden="true" />
-              </button>
-              <div className="flex gap-2" role="tablist" aria-label="Testimonial selector">
-                {TESTIMONIALS.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    role="tab"
-                    aria-selected={i === index}
-                    aria-label={`Testimonial ${i + 1}`}
-                    onClick={() => setIndex([i, i > index ? 1 : -1])}
-                    className={`h-2 rounded-full transition-all duration-300 ${i === index ? "w-8 bg-ice" : "w-2 bg-white/20 hover:bg-white/40"}`}
-                  />
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => go(1)}
-                aria-label="Next testimonial"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-mist transition-colors hover:border-ice hover:text-ice"
-              >
-                <ArrowRight size={17} aria-hidden="true" />
-              </button>
-            </div>
-            <p className="mt-5 text-[11px] tracking-wide text-fog">Sample layout — approved client testimonials will replace these placeholders.</p>
           </div>
-        </Reveal>
-      </Container>
+
+          {/* dots */}
+          <div className="mt-7 flex justify-center gap-2" role="tablist" aria-label="Testimonial selector">
+            {TESTIMONIALS.map((t, i) => (
+              <button
+                key={t.avatar}
+                type="button"
+                role="tab"
+                aria-selected={i === active}
+                aria-label={`Go to testimonial ${i + 1}`}
+                onClick={() => scrollToIndex(i)}
+                className={`h-2 rounded-full transition-colors ${i === active ? "w-8 bg-ice" : "w-2 bg-white/20 hover:bg-white/40"}`}
+              />
+            ))}
+          </div>
+
+          <p className="mt-5 text-center text-xs tracking-wide text-fog">
+            Illustrative sample data &mdash; replace with approved customer stories before launch.
+          </p>
+        </div>
+      </Reveal>
     </section>
   );
 }
