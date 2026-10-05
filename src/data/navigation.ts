@@ -120,10 +120,8 @@ export const NAV_ITEMS: NavEntry[] = [
     children: [
       { label: "About Martian Blue", href: "/about" },
       { label: "Our Mission", href: "/about#mission" },
-      { label: "Our Team", href: "/about#team" },
       { label: "Why Martian Blue", href: "/about#why" },
-      { label: "Partners", href: "/about#partners" },
-      { label: "Careers", href: "/about#partners" },
+      { label: "Careers", href: "/contact" },
     ],
   },
   { label: "Contact Us", href: "/contact" },

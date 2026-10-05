@@ -240,43 +240,6 @@ export function AboutPage() {
         </Container>
       </section>
 
-      {/* TEAM */}
-      <section id="team" aria-labelledby="team-h" className="scroll-mt-24 border-y border-white/10 bg-navy-950/60 py-16 lg:py-20">
-        <Container>
-          <Reveal className="text-center">
-            <p className="eyebrow">Our Team</p>
-            <h2 id="team-h" className="font-display mt-3 text-3xl font-bold text-paper">People Behind MartianBlue</h2>
-          </Reveal>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {["Name — Role", "Name — Role", "Name — Role"].map((t, i) => (
-              <Reveal key={i} delay={i * 0.07}>
-                <div className="panel rounded-2xl p-7 text-center">
-                  <div className="bg-blueprint-grid mx-auto flex h-28 w-28 items-center justify-center rounded-full border border-dashed border-white/20 bg-navy-900/60 text-xs tracking-[0.2em] text-fog" aria-hidden="true">
-                    PHOTO
-                  </div>
-                  <p className="mt-4 text-[15px] text-mist">[ PHOTO ] {t}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          {/* Partners */}
-          <Reveal delay={0.1}>
-            <div id="partners" className="mt-14 scroll-mt-24 text-center">
-              <h3 className="font-mono text-xs tracking-[0.28em] text-fog">TRUSTED TECHNOLOGY & PARTNERS</h3>
-              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Partner logos (placeholders)">
-                {[1, 2, 3, 4].map((n) => (
-                  <div key={n} className="rounded-xl border border-dashed border-white/15 bg-abyss/60 px-4 py-8 text-xs tracking-[0.2em] text-fog">
-                    [ LOGO ]
-                  </div>
-                ))}
-              </div>
-              <p className="mt-4 text-sm text-fog">Technology / Training Partners · Certifications / Affiliations</p>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
       {/* WHY */}
       <section id="why" aria-labelledby="why-about-h" className="scroll-mt-24 py-16 lg:py-20">
         <Container className="max-w-2xl">

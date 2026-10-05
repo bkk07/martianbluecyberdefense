@@ -140,12 +140,40 @@ export const RESOURCE_TABS = ["Blog", "Case Studies", "Security Guides"];
 export interface ResourceCard {
   category: string;
   title: string;
+  image: string;
+  imageAlt: string;
+  date: string;
+  readTime: string;
 }
 
 export const RESOURCE_CARDS: ResourceCard[] = [
-  { category: "Cybersecurity Awareness", title: "Cybersecurity Awareness" },
-  { category: "Phishing & Social Engineering", title: "Phishing & Social Engineering" },
-  { category: "AI & Cybersecurity", title: "AI & Cybersecurity" },
+  {
+    category: "Cybersecurity Awareness",
+    title: "Cybersecurity Awareness",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1200&auto=format&fit=crop",
+    imageAlt: "Security team collaborating in a workshop",
+    date: "March 4, 2026",
+    readTime: "8 min read",
+  },
+  {
+    category: "Phishing & Social Engineering",
+    title: "Phishing & Social Engineering",
+    image:
+      "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1200&auto=format&fit=crop",
+    imageAlt: "Analyst examining a suspicious laptop at night",
+    date: "February 18, 2026",
+    readTime: "12 min read",
+  },
+  {
+    category: "AI & Cybersecurity",
+    title: "AI & Cybersecurity",
+    image:
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200&auto=format&fit=crop",
+    imageAlt: "Abstract visualization of artificial intelligence",
+    date: "January 29, 2026",
+    readTime: "10 min read",
+  },
 ];
 
 export const RESOURCE_CATEGORIES = [

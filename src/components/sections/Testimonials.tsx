@@ -43,7 +43,7 @@ export function Testimonials() {
       <Container>
         <div id="testimonials-heading">
           <SectionHeading
-            eyebrow="Testimonials"
+            eyebrow="Client Stories"
             title="What Our Clients Say"
             copy="Security leaders trust Martian Blue to protect what matters most to their organizations."
             align="center"
@@ -125,10 +125,6 @@ export function Testimonials() {
               />
             ))}
           </div>
-
-          <p className="mt-5 text-center text-xs tracking-wide text-fog">
-            Illustrative sample data &mdash; replace with approved customer stories before launch.
-          </p>
         </div>
       </Reveal>
     </section>

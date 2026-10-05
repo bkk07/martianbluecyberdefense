@@ -294,7 +294,7 @@ export function EducationPage() {
                   Verify Certificate <ArrowRight size={15} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
-              <div className="rounded-xl border border-ice/30 bg-abyss/80 p-8 text-center" role="img" aria-label="Sample certificate of completion for Ethical Hacking and Penetration Testing">
+              <div className="rounded-xl border border-ice/30 bg-abyss/80 p-8 text-center" role="img" aria-label="Certificate of completion for Ethical Hacking and Penetration Testing">
                 <p className="text-[11px] font-bold tracking-[0.24em] text-ice">MARTIANBLUE CYBER DEFENSE</p>
                 <p className="font-display mt-3 text-lg font-bold text-paper">CERTIFICATE OF COMPLETION</p>
                 <p className="mt-2 text-sm text-mist">Ethical Hacking &<br />Penetration Testing</p>

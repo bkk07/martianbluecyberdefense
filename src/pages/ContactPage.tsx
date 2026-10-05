@@ -29,7 +29,7 @@ const HELP_CARDS = [
     icon: Handshake,
     title: "PARTNERSHIP",
     copy: "Interested in working with us?",
-    href: "/about#partners",
+    href: "/about",
   },
 ];
 

@@ -27,8 +27,7 @@ const RESOURCE_LINKS = ["Blog", "Case Studies", "Security Guides", "Research", "
 const COMPANY_LINKS = [
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
-  { label: "Careers", href: "/about#partners" },
-  { label: "Partners", href: "/about#partners" },
+  { label: "Careers", href: "/contact" },
 ];
 
 function ColTitle({ children }: { children: string }) {

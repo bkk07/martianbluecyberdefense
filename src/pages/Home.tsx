@@ -1,5 +1,4 @@
 import { Hero } from "../components/hero/Hero";
-import { CaseStudies } from "../components/sections/CaseStudies";
 import { FeatureShowcase } from "../components/sections/FeatureShowcase";
 import { FinalCTA } from "../components/sections/FinalCTA";
 import { Industries } from "../components/sections/Industries";
@@ -16,7 +15,6 @@ export function Home() {
       <FeatureShowcase />
       <SecurityMetrics />
       <Industries />
-      <CaseStudies />
       <Testimonials />
       <Resources />
       <FinalCTA />
