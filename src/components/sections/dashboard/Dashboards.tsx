@@ -2,13 +2,10 @@ import {
   AlertTriangle,
   ArrowDown,
   Check,
-  CheckCircle2,
-  ChevronRight,
   Clock,
   FileText,
   Flag,
   Paperclip,
-  ShieldAlert,
   ShieldCheck,
   X,
   XCircle,
@@ -40,8 +37,8 @@ function DashHead({
 
 function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-      <p className="font-display text-xl font-bold tabular-nums text-paper">{value}</p>
+    <div className="rounded-lg border border-white/[0.07] bg-[#0D1530] px-3 py-2.5">
+      <p className="text-[19px] font-semibold tabular-nums tracking-tight text-paper">{value}</p>
       <p className="mt-0.5 text-[11px] text-fog">{label}</p>
     </div>
   );
@@ -54,120 +51,91 @@ const SEV_STYLE: Record<string, string> = {
   low: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
 };
 
-const SEV_RAIL: Record<string, string> = {
-  critical: "border-l-rose-400",
-  high: "border-l-orange-400",
-  medium: "border-l-yellow-300",
-  low: "border-l-emerald-400",
-};
-
 /* ---------- 01 · threat command ---------- */
-
-const FEED = [
-  { id: "INC-2041", sev: "critical", text: "Credential-stuffing wave vs login API", time: "12s ago", blocked: true },
-  { id: "INC-2038", sev: "high", text: "Impersonating domain detected: rnartianblue", time: "4m ago", blocked: true },
-  { id: "INC-2035", sev: "medium", text: "Anomalous data egress from finance share", time: "18m ago", blocked: false },
-  { id: "INC-2031", sev: "low", text: "New device enrolled with compliant posture", time: "42m ago", blocked: false },
-];
 
 export function ThreatDashboard() {
   return (
-    <div className="flex h-full flex-col gap-4 p-5 sm:p-6" aria-label="Threat detection dashboard mockup">
+    <div className="flex h-full flex-col gap-3 bg-[#0A1024] p-4 sm:p-5" aria-label="Threat detection dashboard mockup">
       <DashHead
         eyebrow="THREAT COMMAND"
         title="Live incident queue"
         right={
-          <span className="mt-0.5 flex shrink-0 items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
+          <span className="mt-1 flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-400/[0.08] px-3 py-1 text-[12px] font-medium text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
             Monitoring
           </span>
         }
       />
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2.5">
         <Stat value="1,284" label="Blocked / 24h" />
         <Stat value="17" label="Open incidents" />
         <Stat value="3m" label="Median contain" />
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-        <div className="mb-2 flex items-center justify-between text-[11px]">
-          <span className="font-semibold tracking-[0.08em] text-mist">DETECTIONS / 24H</span>
-          <span className="flex items-center gap-3 text-fog">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-3 rounded-full bg-ice" aria-hidden="true" /> Blocked
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-3 rounded-full bg-white/25" aria-hidden="true" /> Allowed
-            </span>
+      {/* featured relatable incident */}
+      <div className="rounded-lg border border-white/[0.07] bg-[#0D1530] p-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-mono text-[10.5px] text-fog">INC-2041 · login API · 12s ago</p>
+          <span className={`shrink-0 rounded-[6px] border px-2 py-[2px] font-mono text-[10px] font-medium uppercase ${SEV_STYLE.critical}`}>
+            Critical
+          </span>
+        </div>
+        <p className="mt-1.5 text-[14px] font-semibold tracking-tight text-[#EAF0FC]">
+          4,000 stolen passwords tested against your login
+        </p>
+        <p className="mt-1 text-[11.5px] leading-relaxed text-mist">
+          412 IPs · AI confidence <span className="font-semibold text-paper">97%</span> · known stuffing kit
+        </p>
+        <div className="mt-2.5 flex items-center gap-2">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+            <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-rose-400 to-orange-300" />
+          </div>
+          <span className="font-mono text-[10px] text-fog">68%</span>
+        </div>
+        <div className="mt-2.5 flex gap-2">
+          <span className="flex-1 rounded-lg bg-[#B9C6FF] px-3 py-1.5 text-center text-[12px] font-semibold text-navy-950">Block 412 IPs</span>
+          <span className="flex-1 rounded-lg border border-white/15 px-3 py-1.5 text-center text-[12px] font-semibold text-paper">Assign analyst</span>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-white/[0.07] bg-[#0D1530] px-4 pb-3 pt-3.5">
+        <div className="mb-1 flex items-center justify-between">
+          <span className="text-[11px] font-semibold tracking-[0.14em] text-mist">DETECTIONS / 24H</span>
+          <span className="flex items-center gap-3 text-[11px] text-fog">
+            <span className="flex items-center gap-1.5"><span className="h-[5px] w-3.5 rounded-full bg-[#9DBDFF]" aria-hidden="true" /> Blocked</span>
+            <span className="flex items-center gap-1.5"><span className="h-[5px] w-3.5 rounded-full bg-white/20" aria-hidden="true" /> Allowed</span>
           </span>
         </div>
         <svg viewBox="0 0 300 84" className="w-full" aria-hidden="true">
           <defs>
             <linearGradient id="threatFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#45E0FF" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#45E0FF" stopOpacity="0" />
+              <stop offset="0%" stopColor="#9DBDFF" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#9DBDFF" stopOpacity="0" />
             </linearGradient>
           </defs>
           {[14, 32, 50, 68].map((y) => (
-            <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+            <line key={y} x1="0" y1={y} x2="300" y2={y} stroke="rgba(148,163,184,0.12)" strokeWidth="1" />
           ))}
-          <line x1="0" y1="22" x2="300" y2="22" stroke="rgba(251,113,133,0.4)" strokeWidth="1" strokeDasharray="4 4" />
-          <polygon
-            points="0,62 25,58 50,60 75,44 100,48 125,36 150,40 175,28 200,32 225,22 250,26 275,16 300,18 300,84 0,84"
-            fill="url(#threatFill)"
-          />
-          <polyline
-            points="0,62 25,58 50,60 75,44 100,48 125,36 150,40 175,28 200,32 225,22 250,26 275,16 300,18"
-            fill="none"
-            stroke="#45E0FF"
-            strokeWidth="2"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-          <circle cx="225" cy="22" r="4" fill="#0b1030" stroke="#FB7185" strokeWidth="2.5" />
+          <polygon points="0,62 25,58 50,60 75,44 100,48 125,36 150,40 175,28 200,32 225,22 250,26 275,16 300,18 300,84 0,84" fill="url(#threatFill)" />
+          <polyline points="0,62 25,58 50,60 75,44 100,48 125,36 150,40 175,28 200,32 225,22 250,26 275,16 300,18" fill="none" stroke="#A9C4FF" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" />
+          <circle cx="225" cy="22" r="9" fill="none" stroke="rgba(251,113,133,0.35)" strokeWidth="1.5" />
+          <circle cx="225" cy="22" r="4.5" fill="#0A1329" stroke="#FDA4AF" strokeWidth="2" />
         </svg>
-        <div className="mt-1 flex justify-between font-mono text-[10px] text-fog">
-          <span>00:00</span>
-          <span>08:00</span>
-          <span>16:00</span>
-          <span>NOW</span>
-        </div>
+        <div className="mt-0.5 flex justify-between font-mono text-[10px] text-fog/80"><span>00:00</span><span>08:00</span><span>16:00</span><span>NOW</span></div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5" aria-label="Filter by severity">
-        {["All · 1,284", "Critical · 3", "High · 9", "Medium · 5"].map((c, i) => (
-          <span
-            key={c}
-            className={`rounded-full border px-2.5 py-1 font-mono text-[10px] ${
-              i === 0 ? "border-ice/50 bg-ice/10 text-ice" : "border-white/10 text-fog"
-            }`}
-          >
-            {c}
-          </span>
-        ))}
-      </div>
-
-      <ul className="slim-scroll max-h-44 space-y-2 overflow-y-auto pr-1">
-        {FEED.map((f) => (
-          <li
-            key={f.id}
-            className={`flex items-center gap-3 rounded-lg border border-white/[0.08] border-l-2 bg-white/[0.02] px-3 py-2.5 ${SEV_RAIL[f.sev]}`}
-          >
-            {f.blocked ? (
-              <CheckCircle2 size={16} className="shrink-0 text-emerald-400" aria-hidden="true" />
-            ) : (
-              <AlertTriangle size={16} className="shrink-0 text-yellow-300" aria-hidden="true" />
-            )}
+      <ul className="space-y-2">
+        {[
+          { id: "INC-2038", sev: "high", text: "Fake domain rnartianblue tricking staff", time: "4m ago" },
+          { id: "INC-2035", sev: "medium", text: "Finance share sending data outside", time: "18m ago" },
+        ].map((f) => (
+          <li key={f.id} className="flex items-center gap-3 rounded-lg border border-white/[0.06] bg-[#0D1530] px-3 py-2" style={{ borderLeft: `2px solid ${f.sev === "high" ? "#FB923C" : "#FACC15"}` }}>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[13px] text-paper">{f.text}</p>
-              <p className="font-mono text-[11px] text-fog">
-                {f.id} · {f.time}
-              </p>
+              <p className="truncate text-[13px] font-medium text-[#E6EDFB]">{f.text}</p>
+              <p className="mt-0.5 font-mono text-[11px] text-fog">{f.id} · {f.time}</p>
             </div>
-            <span className={`shrink-0 rounded border px-2 py-0.5 font-mono text-[10px] uppercase ${SEV_STYLE[f.sev]}`}>
-              {f.sev}
-            </span>
+            <span className={`shrink-0 rounded-[6px] border px-2 py-[3px] font-mono text-[10px] uppercase ${SEV_STYLE[f.sev]}`}>{f.sev}</span>
           </li>
         ))}
       </ul>
@@ -382,88 +350,74 @@ export function DataProtectionDashboard() {
   );
 }
 
-/* ---------- 04 · secure pipeline ---------- */
-
-const STAGES = [
-  ["Commit", "done"],
-  ["SAST", "done"],
-  ["Secrets", "done"],
-  ["DAST", "warn"],
-  ["Deploy", "blocked"],
-] as const;
-
-const STAGE_STYLE = {
-  done: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  warn: "border-yellow-500/30 bg-yellow-500/10 text-yellow-300",
-  blocked: "border-rose-500/30 bg-rose-500/10 text-rose-300",
-} as const;
-
-const STAGE_ICON = {
-  done: <Check size={11} strokeWidth={3} aria-hidden="true" />,
-  warn: <AlertTriangle size={11} aria-hidden="true" />,
-  blocked: <XCircle size={11} aria-hidden="true" />,
-} as const;
+/* ---------- 04 · security operations review ---------- */
 
 export function SecureDevDashboard() {
   return (
-    <div className="flex h-full flex-col gap-4 p-5 sm:p-6" aria-label="Secure pipeline dashboard mockup">
-      <DashHead
-        eyebrow="APPLICATION SECURITY"
-        title="Pipeline gates · checkout-api"
-        right={
-          <span className="mt-0.5 shrink-0 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1 font-mono text-[11px] text-rose-300">
-            GATE HELD
-          </span>
-        }
-      />
+    <div className="relative overflow-hidden bg-[#080D20]" aria-label="Security operations review mockup">
+      {/* product nav like a real screenshot */}
+      <div className="flex items-center gap-4 border-b border-white/[0.06] px-4 py-2.5">
+        <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-[0.12em] text-paper">
+          <ShieldCheck size={15} className="text-rose-300" /> MARTIAN BLUE
+        </span>
+        <span className="ml-2 hidden items-center gap-3 text-[10.5px] text-fog min-[420px]:flex">
+          {["Dashboard", "Achievements", "Challenges", "Leaderboards", "Reported threats"].map((n) => (
+            <span key={n}>{n}</span>
+          ))}
+        </span>
+        <span className="ml-auto font-mono text-[10.5px] text-fog">John Doe</span>
+      </div>
 
-      <ol className="flex items-center" aria-label="Pipeline stages">
-        {STAGES.map(([s, st], i) => (
-          <li key={s} className={`flex items-center ${i < STAGES.length - 1 ? "flex-1" : ""}`}>
-            <span
-              className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-semibold ${STAGE_STYLE[st]}`}
-            >
-              {STAGE_ICON[st]}
-              {s}
-            </span>
-            {i < STAGES.length - 1 && (
-              <ChevronRight size={13} aria-hidden="true" className="mx-0.5 shrink-0 text-fog" />
-            )}
-          </li>
-        ))}
-      </ol>
-
-      <ul className="space-y-2">
-        {[
-          ["BOLA-04 · order endpoint exposes other tenants", "api/orders.ts:142", "Critical"],
-          ["JWT accepted without expiry check", "auth/session.ts:88", "High"],
-          ["Verbose stack traces in staging errors", "api/errors.ts:31", "Medium"],
-        ].map(([t, ref, sev]) => (
-          <li
-            key={t as string}
-            className="rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2.5"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-[13px] text-paper">{t}</p>
-              <span
-                className={`shrink-0 rounded border px-2 py-0.5 font-mono text-[10px] uppercase ${SEV_STYLE[(sev as string).toLowerCase()]}`}
-              >
-                {sev}
-              </span>
-            </div>
-            <p className="mt-1 font-mono text-[11px] text-fog">
-              {ref} · owner assigned · patch attached
-            </p>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-auto flex items-start gap-2.5 rounded-xl border border-rose-500/25 bg-rose-500/[0.07] px-3.5 py-3 text-[13px] leading-relaxed text-paper">
-        <ShieldAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-rose-300" />
-        <p>
-          Deploy gate <span className="font-semibold text-rose-300">held</span> — 2 findings must be
-          fixed or waived.
+      {/* red banner */}
+      <div className="m-3.5 rounded-lg bg-gradient-to-r from-[#B83A5A] via-[#93304E] to-[#3A1F3D] px-4 py-3.5">
+        <p className="inline-block rounded-full bg-white/15 px-2 py-0.5 font-mono text-[9.5px] text-rose-100">63 other people also reported this email!</p>
+        <p className="mt-1.5 text-[14.5px] font-semibold leading-snug text-white">
+          Excellent job! You&apos;ve caught a malicious email. Avoid any interaction with it.
         </p>
+      </div>
+
+      {/* dimmed background content for depth */}
+      <div className="grid gap-2.5 px-3.5 opacity-70" aria-hidden="true">
+        <div className="grid grid-cols-[1.2fr_0.8fr] gap-2.5">
+          <div className="rounded-lg border border-white/[0.07] bg-[#0B142E] p-3">
+            <p className="text-[12px] font-semibold text-paper">⌨ What&apos;s going on?</p>
+            <p className="mt-1.5 text-[10.5px] leading-relaxed text-fog">
+              Classified as malicious with high confidence. Malicious attachment included.
+            </p>
+          </div>
+          <div className="rounded-lg border border-white/[0.07] bg-[#0B142E] p-3">
+            <p className="text-[12px] font-semibold text-paper">◍ What to do?</p>
+            <p className="mt-1.5 text-[10.5px] leading-relaxed text-fog">Do not reply. Delete it.</p>
+          </div>
+        </div>
+        <div className="rounded-lg border border-white/[0.07] bg-[#0B142E] p-3">
+          <p className="text-[12px] font-semibold text-paper">◍ Threat indicators</p>
+          <div className="mt-2.5 flex h-16 items-end gap-[3px]">
+            {[10, 16, 9, 24, 14, 30, 18, 26, 12, 22, 15, 28, 17, 32, 14, 20, 11, 24, 16, 21].map((h, i) => (
+              <span key={i} className="w-full rounded-[2px] bg-[#8FA4FF]/60" style={{ height: `${h * 2}px`, maxHeight: "64px" }} />
+            ))}
+          </div>
+          <p className="mt-1.5 flex justify-between font-mono text-[9px] text-fog"><span>Sep 11</span><span>Sep 26</span></p>
+        </div>
+      </div>
+
+      {/* sharp foreground incident card */}
+      <div className="relative z-10 mx-3.5 -mt-24 mb-3.5 ml-auto w-[68%] max-w-[290px] rounded-xl border border-[#7C8CFF]/45 bg-[#0C1430]/97 p-4 shadow-[0_0_45px_-10px_rgba(108,120,255,0.55),0_28px_60px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+        <p className="text-[13px] font-semibold text-paper">New incident created</p>
+        <ul className="mt-3 space-y-2.5 border-t border-white/[0.07] pt-3 text-[11.5px]">
+          {[
+            ["Email received:", "02/02/2025, 10:47 AM", "text-fog"],
+            ["User action:", "Opened attachment", "text-[#9DBDFF]"],
+            ["Email reported:", "02/02/2025, 10:49 AM", "text-fog"],
+            ["Classified by Martian:", "Malicious · 10:49 AM", "text-rose-300"],
+            ["Emails deleted:", "02/02/2025, 10:50 AM", "text-fog"],
+          ].map(([k, v, cls]) => (
+            <li key={k as string} className="flex items-start justify-between gap-2">
+              <span className="flex items-center gap-1.5 text-mist"><span className="h-1 w-1 rounded-full bg-[#7C8CFF]" />{k}</span>
+              <span className={`text-right font-mono text-[10.5px] ${cls as string}`}>{v as string}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

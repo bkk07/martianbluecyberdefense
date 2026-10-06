@@ -6,12 +6,8 @@ import { Reveal } from "../ui/Reveal";
 import {
   AwarenessDashboard,
   DataProtectionDashboard,
-  FindingCard,
-  IncidentCard,
-  PolicyCard,
   SecureDevDashboard,
   ThreatDashboard,
-  TraineeCard,
 } from "./dashboard/Dashboards";
 
 const DASHBOARDS = {
@@ -21,12 +17,12 @@ const DASHBOARDS = {
   sdlc: SecureDevDashboard,
 } as const;
 
-const FLOATERS = {
-  threat: IncidentCard,
-  awareness: TraineeCard,
-  data: PolicyCard,
-  sdlc: FindingCard,
-} as const;
+const CHROME_TITLE: Record<Feature["dashboard"], string> = {
+  threat: "console.martianblue · Threat Command",
+  awareness: "console.martianblue · Phishing Inbox",
+  data: "console.martianblue · Data Guard",
+  sdlc: "console.martianblue · Secure Pipeline",
+};
 
 const DASHBOARD_CAPTIONS: Record<Feature["dashboard"], string> = {
   threat: "Correlated alerts, one triage queue",
@@ -44,10 +40,9 @@ const FEATURE_SERVICE: Record<Feature["dashboard"], { label: string; href: strin
 
 function FeatureRow({ feature, flip }: { feature: Feature; flip: boolean }) {
   const Dashboard = DASHBOARDS[feature.dashboard];
-  const Floater = FLOATERS[feature.dashboard];
   const svc = FEATURE_SERVICE[feature.dashboard];
   return (
-    <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+    <div className="grid items-center gap-7 lg:grid-cols-[1fr_1.05fr] lg:gap-12">
       <Reveal className={flip ? "lg:order-2" : ""}>
         <p className="eyebrow flex items-center gap-2.5">
           <span className="h-1.5 w-1.5 rounded-full bg-ice" aria-hidden="true" />
@@ -72,31 +67,26 @@ function FeatureRow({ feature, flip }: { feature: Feature; flip: boolean }) {
         </Link>
       </Reveal>
       <Reveal delay={0.1} className={flip ? "lg:order-1" : ""}>
-        <div>
-          <div className="panel panel-top-highlight overflow-hidden rounded-2xl shadow-[0_32px_90px_-30px_rgba(46,124,246,0.4)]">
-          <div className="flex items-center gap-3 border-b border-white/10 bg-white/[0.02] px-4 py-2.5" aria-hidden="true">
+        <div className="relative min-w-0">
+          <div className="relative overflow-hidden rounded-xl border border-white/[0.08] bg-[#0A1024] shadow-[0_24px_60px_-28px_rgba(2,6,18,0.9)]">
+          <div className="flex items-center gap-3 border-b border-white/[0.07] bg-[#0C1430] px-4 py-2.5" aria-hidden="true">
             <span className="flex gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-              <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+              <span className="h-2.5 w-2.5 rounded-full border border-white/10 bg-white/[0.14]" />
+              <span className="h-2.5 w-2.5 rounded-full border border-white/10 bg-white/[0.14]" />
+              <span className="h-2.5 w-2.5 rounded-full border border-white/10 bg-white/[0.14]" />
             </span>
             <span className="flex min-w-0 flex-1 items-center justify-center">
-              <span className="flex items-center gap-1.5 rounded-md border border-white/10 bg-abyss/70 px-3 py-1 font-mono text-[11px] tracking-[0.08em] text-mist">
+              <span className="flex items-center gap-1.5 rounded-md border border-white/[0.08] bg-abyss/80 px-3 py-1 font-mono text-[11px] tracking-[0.08em] text-mist shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
                 <ShieldCheck size={12} className="text-ice" />
-                <span className="truncate">console.martianblue · Threat Command</span>
+                <span className="truncate">{CHROME_TITLE[feature.dashboard]}</span>
               </span>
             </span>
-            <span className="hidden rounded border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] tracking-[0.12em] text-emerald-300 sm:block">
-              PROD
-            </span>
+
           </div>
           <Dashboard />
-          <p className="border-t border-white/10 px-5 py-3.5 text-sm font-medium text-mist">
+          <p className="border-t border-white/[0.07] bg-[#0C1430] px-5 py-3 text-[13px] font-medium text-fog">
             {DASHBOARD_CAPTIONS[feature.dashboard]}
           </p>
-          </div>
-          <div className="relative z-10 mx-4 -mt-8 flex justify-end sm:mx-8">
-            <Floater />
           </div>
         </div>
       </Reveal>
@@ -106,9 +96,9 @@ function FeatureRow({ feature, flip }: { feature: Feature; flip: boolean }) {
 
 export function FeatureShowcase() {
   return (
-    <section id="platform" className="scroll-mt-20 py-20 lg:py-28" aria-label="Feature showcase">
+    <section id="platform" className="scroll-mt-20 py-14 lg:py-20" aria-label="Feature showcase">
       <Container>
-        <div className="space-y-16 lg:space-y-24">
+        <div className="space-y-10 lg:space-y-16">
           {FEATURES.map((f, i) => (
             <div key={f.id} id={f.id} className="scroll-mt-24">
               <FeatureRow feature={f} flip={i % 2 === 1} />
